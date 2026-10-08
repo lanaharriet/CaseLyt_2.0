@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-paper: #F4F0E7;
+    --text-primary: #171717;
+    --accent-burgundy: #6C2029;
+    --secondary-gold: #AD8748;
+    --status-success: #3E654F;
+    --status-warning: #A16D2B;
+    --status-error: #92383B;
+  }
+
+  body {
+    background-color: var(--bg-paper);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, h4, .font-serif-heading {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  .font-mono-code {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Custom scrollbar for legal investigative aesthetic */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #EAE5D9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C4BBB0;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8C8275;
+}
+
+/* Paper card background and fine legal borders */
+.legal-card {
+  background-color: #FAF8F5;
+  border: 1px solid rgba(23, 23, 23, 0.12);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.legal-card-dark {
+  background-color: #1E1D1B;
+  border: 1px solid rgba(244, 240, 231, 0.15);
+  color: #F4F0E7;
+}
+
+.legal-border {
+  border-color: rgba(23, 23, 23, 0.12);
+}
+
+.legal-border-strong {
+  border-color: rgba(23, 23, 23, 0.25);
+}
+
+.legal-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Custom react-flow nodes styling for evidence graph */
+.react-flow__node {
+  border-radius: 4px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
