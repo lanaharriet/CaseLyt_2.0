@@ -1,0 +1,15 @@
+﻿__pycache__/
+*.py[cod]
+*.class
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+.env
+env/
+venv/
+.venv/
+node_modules/
+dist/
+.DS_Store
+Thumbs.db

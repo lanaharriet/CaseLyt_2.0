@@ -93,7 +93,8 @@ export interface GraphNodeItem {
   node_id: string;
   label: string;
   type: 'Person' | 'Location' | 'Date' | 'Event' | 'Document' | 'Evidence' | 'Claim';
-  properties: Record<string, any>;
+  properties?: Record<string, any>;
+  properties_json?: string;
 }
 
 export interface GraphEdgeItem {

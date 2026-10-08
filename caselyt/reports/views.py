@@ -1,11 +1,11 @@
 from django.http import HttpResponse
-from rest_framework.views import APIView
+from django.views import View
 from .generator import CaseReportGenerator
 
-class ExportReportView(APIView):
+class ExportReportView(View):
     def get(self, request):
-        format_type = request.query_params.get('format', 'pdf').lower()
-        case_id = request.query_params.get('case_id')
+        format_type = request.GET.get('format', 'pdf').lower()
+        case_id = request.GET.get('case_id')
 
         if format_type == 'docx':
             buffer = CaseReportGenerator.generate_docx_report(case_id=case_id)

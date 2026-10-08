@@ -17,6 +17,7 @@ class DocumentProcessor:
         try:
             document.status = 'PROCESSING'
             document.save()
+            document.pages.all().delete()
 
             if not document.file or not os.path.exists(document.file.path):
                 # Handle sample/in-memory text content if file path doesn't exist on disk yet

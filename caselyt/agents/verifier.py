@@ -73,16 +73,17 @@ class VerificationGate:
 
         # Step 4: Conflict Check
         # Check if any detected contradiction involves this document/passage
-        conflicts = Contradiction.objects.filter(
-            source_a_para=paragraph_id
-        ) | Contradiction.objects.filter(
-            source_b_para=paragraph_id
-        )
-
-        has_conflict = conflicts.exists()
-
-        if has_conflict:
-            conflict_obj = conflicts.first()
+        has_conflict = False
+        conflict_obj = None
+        if paragraph_id:
+            conflicts = Contradiction.objects.filter(
+                source_a_para=paragraph_id
+            ) | Contradiction.objects.filter(
+                source_b_para=paragraph_id
+            )
+            has_conflict = conflicts.exists()
+            if has_conflict:
+                conflict_obj = conflicts.first()
             return {
                 'status': 'CONFLICTING',
                 'verdict': f'CONFLICTING — Contradiction detected with {conflict_obj.source_b_doc_name if conflict_obj.source_a_para == paragraph_id else conflict_obj.source_a_doc_name}',

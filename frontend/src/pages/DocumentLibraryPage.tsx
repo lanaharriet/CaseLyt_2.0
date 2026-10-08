@@ -8,14 +8,22 @@ export const DocumentLibraryPage: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [selectedDoc, setSelectedDoc] = useState<DocumentItem | null>(null);
 
-  useEffect(() => {
-    fetchDocs();
-  }, []);
-
   const fetchDocs = async () => {
     const docs = await apiService.getDocuments();
     setDocuments(docs);
   };
+
+  useEffect(() => {
+    let isMounted = true;
+    apiService.getDocuments().then((docs) => {
+      if (isMounted) {
+        setDocuments(docs);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;

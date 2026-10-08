@@ -23,34 +23,39 @@ export const CaseReviewPage: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<ClaimItem | EvidenceItem | null>(null);
 
   useEffect(() => {
-    loadCaseData();
+    let isMounted = true;
+    void (async () => {
+      const [docs, findList, claimList, timeList, contraList, missList, evList, dna] = await Promise.all([
+        apiService.getDocuments(),
+        apiService.getFindings(),
+        apiService.getClaims(),
+        apiService.getTimeline(),
+        apiService.getContradictions(),
+        apiService.getMissingInfo(),
+        apiService.getEvidences(),
+        apiService.getCaseDNA(),
+      ]);
+
+      if (isMounted) {
+        setDocuments(docs);
+        setFindings(findList);
+        setTimeline(timeList);
+        setContradictions(contraList);
+        setMissingInfo(missList);
+        setDnaData(dna);
+
+        if (claimList.length > 0) {
+          setSelectedItem(claimList[0]);
+        } else if (evList.length > 0) {
+          setSelectedItem(evList[0]);
+        }
+      }
+    })();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
-
-  const loadCaseData = async () => {
-    const [docs, findList, claimList, timeList, contraList, missList, evList, dna] = await Promise.all([
-      apiService.getDocuments(),
-      apiService.getFindings(),
-      apiService.getClaims(),
-      apiService.getTimeline(),
-      apiService.getContradictions(),
-      apiService.getMissingInfo(),
-      apiService.getEvidences(),
-      apiService.getCaseDNA(),
-    ]);
-
-    setDocuments(docs);
-    setFindings(findList);
-    setTimeline(timeList);
-    setContradictions(contraList);
-    setMissingInfo(missList);
-    setDnaData(dna);
-
-    if (claimList.length > 0) {
-      setSelectedItem(claimList[0]);
-    } else if (evList.length > 0) {
-      setSelectedItem(evList[0]);
-    }
-  };
 
   return (
     <div className="space-y-4">

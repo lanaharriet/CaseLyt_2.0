@@ -281,20 +281,35 @@ export const apiService = {
     }
     return {
       nodes: [
-        { id: '1', node_id: 'doc_chargesheet', label: 'CBI ChargeSheet FIR 204/2024', type: 'Document', properties: { pages: 14 } },
-        { id: '2', node_id: 'event_flight', label: 'Flight LX-147 to Zurich (14 Mar 2024)', type: 'Event', properties: { date: '14 March 2024' } },
-        { id: '3', node_id: 'person_vikram', label: 'Vikram Malhotra (Accused No. 1)', type: 'Person', properties: { role: 'Accused' } },
-        { id: '4', node_id: 'claim_alibi', label: 'Claim: Flight Alibi Verified', type: 'Claim', properties: { status: 'VERIFIED' } },
-        { id: '5', node_id: 'doc_kpmg', label: 'KPMG Forensic Audit Report', type: 'Document', properties: { pages: 28 } },
-        { id: '6', node_id: 'ev_transfer', label: 'Wire Transfer Rs 3.4 Cr (TXN-99812)', type: 'Evidence', properties: { amount: 'Rs 3.4 Crores' } },
-        { id: '7', node_id: 'person_siddharth', label: 'Siddharth Verma (Co-Accused)', type: 'Person', properties: { role: 'Co-Accused' } },
+        { id: '1', node_id: 'person_vikram', label: 'Vikram Malhotra (Accused No. 1)', type: 'Person', properties: { role: 'Promoter & Accused', status: 'Alibi Verified', location: 'Zurich' } },
+        { id: '2', node_id: 'person_siddharth', label: 'Siddharth Verma (Co-Accused)', type: 'Person', properties: { role: 'Director & Token Custodian', status: 'Disputed Key' } },
+        { id: '3', node_id: 'doc_chargesheet', label: 'CBI ChargeSheet FIR 204/2024', type: 'Document', properties: { pages: 14, doc_type: 'PDF', source: 'EOW / CBI' } },
+        { id: '4', node_id: 'doc_kpmg', label: 'KPMG Forensic Audit Report', type: 'Document', properties: { pages: 28, doc_type: 'PDF', source: 'KPMG Forensics' } },
+        { id: '5', node_id: 'doc_icici', label: 'ICICI Bank Ledger Statement', type: 'Document', properties: { pages: 6, doc_type: 'DOCX', source: 'ICICI Bank' } },
+        { id: '6', node_id: 'doc_witness', label: 'Witness Deposition Siddharth Verma', type: 'Document', properties: { pages: 9, doc_type: 'PDF', source: 'Magistrate Court' } },
+        { id: '7', node_id: 'event_flight', label: 'Swiss Air Flight LX-147 Departure', type: 'Event', properties: { date: '14 March 2024, 14:30 IST', origin: 'DEL', dest: 'ZRH' } },
+        { id: '8', node_id: 'event_delhi_meeting', label: 'Alleged New Delhi Office Meeting', type: 'Event', properties: { date: '15 March 2024, 11:00 IST', status: 'CONTRADICTED' } },
+        { id: '9', node_id: 'ev_transfer', label: 'Wire Transfer Rs 3.4 Cr (TXN-99812)', type: 'Evidence', properties: { amount: 'INR 3.4 Crores', date: '15 March 2024', relevance: '0.96' } },
+        { id: '10', node_id: 'ev_geneva_ip', label: 'Geneva IP 194.230.145.12 Digital Log', type: 'Evidence', properties: { ip: '194.230.145.12', location: 'Geneva', relevance: '0.98' } },
+        { id: '11', node_id: 'claim_alibi', label: 'Claim: Flight Alibi Verified (Zurich)', type: 'Claim', properties: { status: 'VERIFIED', citation: 'DOC_cbi001_P1_PAR3' } },
+        { id: '12', node_id: 'claim_delhi_presence', label: 'Claim: Physical Presence in Delhi', type: 'Claim', properties: { status: 'CONFLICTING', citation: 'DOC_cbi001_P1_PAR1' } },
+        { id: '13', node_id: 'loc_zurich', label: 'Zurich Airport & Alpine Canton', type: 'Location', properties: { country: 'Switzerland', type: 'International' } },
+        { id: '14', node_id: 'loc_delhi', label: 'Connaught Place, New Delhi', type: 'Location', properties: { country: 'India', jurisdiction: 'Special CBI Court' } },
       ],
       edges: [
-        { id: 'e1', source: 'doc_chargesheet', target: 'event_flight', relationship: 'Derived From', details: 'Page 1' },
-        { id: 'e2', source: 'event_flight', target: 'claim_alibi', relationship: 'Supports', details: 'Physical alibi' },
-        { id: 'e3', source: 'person_vikram', target: 'claim_alibi', relationship: 'References', details: 'Accused Alibi' },
-        { id: 'e4', source: 'doc_kpmg', target: 'ev_transfer', relationship: 'References', details: 'Geneva IP Log' },
-        { id: 'e5', source: 'person_siddharth', target: 'ev_transfer', relationship: 'Contradicts', details: 'Disputes token under oath' },
+        { id: 'e1', source: 'doc_chargesheet', target: 'event_flight', relationship: 'Derived From', details: 'Page 1 Para 3' },
+        { id: 'e2', source: 'event_flight', target: 'loc_zurich', relationship: 'References', details: 'Flight Destination' },
+        { id: 'e3', source: 'event_flight', target: 'claim_alibi', relationship: 'Supports', details: 'Proves physical absence from India' },
+        { id: 'e4', source: 'person_vikram', target: 'claim_alibi', relationship: 'References', details: 'Accused No. 1 Alibi' },
+        { id: 'e5', source: 'doc_chargesheet', target: 'event_delhi_meeting', relationship: 'Derived From', details: 'Page 1 Para 1' },
+        { id: 'e6', source: 'event_delhi_meeting', target: 'claim_delhi_presence', relationship: 'Supports', details: 'Prosecution Allegation' },
+        { id: 'e7', source: 'claim_alibi', target: 'claim_delhi_presence', relationship: 'Contradicts', details: 'Direct Physical Impossibility' },
+        { id: 'e8', source: 'doc_kpmg', target: 'ev_geneva_ip', relationship: 'Derived From', details: 'Page 3 Sec 4.2' },
+        { id: 'e9', source: 'ev_geneva_ip', target: 'ev_transfer', relationship: 'Supports', details: 'IP Origin Audit Trail' },
+        { id: 'e10', source: 'doc_icici', target: 'ev_transfer', relationship: 'Derived From', details: 'Ledger Statement' },
+        { id: 'e11', source: 'doc_witness', target: 'person_siddharth', relationship: 'References', details: 'Sworn Deposition' },
+        { id: 'e12', source: 'person_siddharth', target: 'ev_transfer', relationship: 'Contradicts', details: 'Disputes Token Under Oath' },
+        { id: 'e13', source: 'event_delhi_meeting', target: 'loc_delhi', relationship: 'References', details: 'Alleged Meeting Place' },
       ]
     };
   },
@@ -402,18 +417,83 @@ export const apiService = {
     }
   },
 
-  generateDraft: async (draft_type: string): Promise<LegalDraftItem> => {
+  generateDraft: async (draft_type: string, custom_prompt: string = '', instructions: string = ''): Promise<LegalDraftItem> => {
     try {
-      const res = await axios.post(`${API_BASE}/drafting/generate/`, { draft_type });
+      const res = await axios.post(`${API_BASE}/drafting/generate/`, {
+        draft_type,
+        custom_prompt,
+        instructions
+      });
       return res.data;
     } catch {
+      const title = custom_prompt ? custom_prompt : draft_type === 'BAIL_APPLICATION' ? 'Bail Application — Vikram Malhotra (FIR No. 204/2024)' : `${draft_type.replace(/_/g, ' ')} — Vikram Malhotra`;
       return {
         draft_type,
-        title: 'Bail Application — Vikram Malhotra (FIR No. 204/2024)',
+        title,
         verified_facts_count: 2,
         missing_variables_count: 3,
-        content: `IN THE COURT OF THE SPECIAL JUDGE (CBI / FINANCIAL FRAUD), NEW DELHI\n\nAPPLICATION UNDER SECTION 439 OF CrPC FOR REGULAR BAIL IN FIR NO. 204/2024\n\n1. EVIDENCE-BACKED FACTUAL FOUNDATION:\n   a. ALIBI: As established in verified case document [DOC_cbi001_P1_PAR3], on 14th March 2024 at 14:30 IST, Applicant boarded Swiss Air Flight LX-147 to Zurich.\n   b. FINANCIAL DISCREPANCY: Transfer of Rs 3.4 Crores executed from Geneva IP under key of Co-Accused Siddharth Verma [DOC_kpmg02_P3_PAR1].\n\n2. UNFOUNDED / MISSING PROSECUTION MANDATES:\n   - Applicant Passport Registration Number: [INFORMATION NOT FOUND IN CASE FILE]\n   - Local Surety Verifiable Utility Document: [INFORMATION NOT FOUND IN CASE FILE]\n   - Certified Seizure Memo for Primary Laptop: [INFORMATION NOT FOUND IN CASE FILE]\n\nPRAYER: Grant regular bail to the Applicant.`
+        content: `IN THE COURT OF THE SPECIAL JUDGE (CBI / FINANCIAL FRAUD), NEW DELHI\n\n${title.toUpperCase()}\n\n1. EVIDENCE-BACKED FACTUAL FOUNDATION:\n   a. ALIBI: As established in verified case document [DOC_cbi001_P1_PAR3], on 14th March 2024 at 14:30 IST, Applicant boarded Swiss Air Flight LX-147 to Zurich.\n   b. FINANCIAL DISCREPANCY: Transfer of Rs 3.4 Crores executed from Geneva IP under key of Co-Accused Siddharth Verma [DOC_kpmg02_P3_PAR1].\n\n2. UNFOUNDED / MISSING PROSECUTION MANDATES:\n   - Applicant Passport Registration Number: [INFORMATION NOT FOUND IN CASE FILE]\n   - Local Surety Verifiable Utility Document: [INFORMATION NOT FOUND IN CASE FILE]\n   - Certified Seizure Memo for Primary Laptop: [INFORMATION NOT FOUND IN CASE FILE]\n\nPRAYER: Grant appropriate relief strictly according to evidence in case record.\n\nFILED BY: ADVOCATE FOR APPLICANT`
       };
+    }
+  },
+
+  downloadDraftWord: async (title: string, content: string, draft_type: string = 'BAIL_APPLICATION') => {
+    try {
+      const res = await axios.post(
+        `${API_BASE}/drafting/export/docx/`,
+        { title, content, draft_type },
+        { responseType: 'blob' }
+      );
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      const cleanTitle = title.replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 35);
+      link.setAttribute('download', `CASELYT_${cleanTitle || 'Legal_Draft'}.docx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Error downloading Word draft, generating client-side fallback blob", err);
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `CASELYT_${draft_type}.doc`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    }
+  },
+
+  downloadDraftPdf: async (title: string, content: string, draft_type: string = 'BAIL_APPLICATION') => {
+    try {
+      const res = await axios.post(
+        `${API_BASE}/drafting/export/pdf/`,
+        { title, content, draft_type },
+        { responseType: 'blob' }
+      );
+      const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      const cleanTitle = title.replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 35);
+      link.setAttribute('download', `CASELYT_${cleanTitle || 'Legal_Draft'}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Error downloading PDF draft, generating client-side fallback blob", err);
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `CASELYT_${draft_type}.txt`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
     }
   },
 
