@@ -4,10 +4,27 @@ from documents.models import Paragraph, Document
 from evidence.models import Evidence, Claim
 from timeline.models import TimelineEvent
 
+STOP_WORDS = {
+    'what', 'which', 'where', 'when', 'who', 'whom', 'whose', 'why', 'how',
+    'the', 'a', 'an', 'and', 'or', 'but', 'if', 'because', 'as', 'until',
+    'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between',
+    'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to',
+    'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again',
+    'further', 'then', 'once', 'here', 'there', 'all', 'any', 'both', 'each',
+    'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not',
+    'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can',
+    'will', 'just', 'don', 'should', 'now', 'is', 'was', 'are', 'were',
+    'did', 'does', 'do', 'has', 'have', 'had', 'been', 'being', 'having'
+}
+
 class HybridRetrievalEngine:
     @staticmethod
     def search(query: str, case_id: str = None, top_k: int = 10):
-        query_terms = [t.lower() for t in re.findall(r'\w+', query) if len(t) > 2]
+        all_terms = [t.lower() for t in re.findall(r'\w+', query) if len(t) > 1]
+        query_terms = [t for t in all_terms if t not in STOP_WORDS and len(t) > 2]
+        if not query_terms and all_terms:
+            query_terms = all_terms
+
         
         # 1. Fetch paragraphs
         paras = Paragraph.objects.all()

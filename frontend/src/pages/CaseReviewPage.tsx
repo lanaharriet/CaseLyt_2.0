@@ -87,7 +87,7 @@ export const CaseReviewPage: React.FC = () => {
       {/* 3-COLUMN HERO LAYOUT */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
         {/* LEFT COLUMN: Documents (3 cols) */}
-        <div className="lg:col-span-3 legal-card p-4 space-y-3 h-[680px] overflow-y-auto">
+        <div className="lg:col-span-3 legal-card p-4 space-y-3 max-h-[360px] lg:max-h-none lg:h-[680px] overflow-y-auto">
           <div className="flex items-center justify-between border-b border-[#171717]/15 pb-2">
             <span className="text-xs font-serif font-bold text-[#171717]">Case Documents</span>
             <span className="text-[10px] font-mono bg-[#171717]/10 text-[#171717] px-1.5 py-0.5 rounded-xs">
@@ -124,9 +124,9 @@ export const CaseReviewPage: React.FC = () => {
         {/* CENTER COLUMN: Case Intelligence (6 cols) */}
         <div className="lg:col-span-6 space-y-3">
           {/* Tab Controls */}
-          <div className="flex items-center space-x-1 border-b border-[#171717]/20 bg-[#FAF8F5] p-1 rounded-xs">
+          <div className="flex items-center space-x-1 border-b border-[#171717]/20 bg-[#FAF8F5] p-1 rounded-xs overflow-x-auto no-scrollbar">
             {[
-              { id: 'facts', label: 'Key Verified Facts', icon: ShieldCheck },
+              { id: 'facts', label: 'Key Facts', icon: ShieldCheck },
               { id: 'timeline', label: 'Timeline', icon: Clock },
               { id: 'contradictions', label: 'Contradictions', icon: AlertTriangle, count: contradictions.length },
               { id: 'missing', label: 'Missing Info', icon: HelpCircle, count: missingInfo.length },
@@ -135,7 +135,7 @@ export const CaseReviewPage: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex-1 py-1.5 px-2 text-xs font-medium rounded-xs transition-colors flex items-center justify-center space-x-1.5 ${
+                className={`shrink-0 flex-1 py-1.5 px-2 text-xs font-medium rounded-xs transition-colors flex items-center justify-center space-x-1.5 whitespace-nowrap ${
                   activeTab === tab.id
                     ? 'bg-[#6C2029] text-[#F4F0E7] font-semibold shadow-xs'
                     : 'text-[#171717]/70 hover:bg-[#EAE5D9]/60'
@@ -153,7 +153,7 @@ export const CaseReviewPage: React.FC = () => {
           </div>
 
           {/* Tab Content Box */}
-          <div className="legal-card p-4 h-[620px] overflow-y-auto space-y-3">
+          <div className="legal-card p-4 min-h-[380px] lg:h-[620px] overflow-y-auto space-y-3">
             {activeTab === 'facts' && (
               <div className="space-y-3">
                 <div className="text-xs font-mono text-[#AD8748] uppercase tracking-wider font-bold">
@@ -301,7 +301,7 @@ export const CaseReviewPage: React.FC = () => {
         </div>
 
         {/* RIGHT COLUMN: Evidence Inspector (3 cols) */}
-        <div className="lg:col-span-3 h-[680px]">
+        <div className="lg:col-span-3 min-h-[400px] lg:h-[680px]">
           <EvidenceInspector selectedItem={selectedItem} />
         </div>
       </div>

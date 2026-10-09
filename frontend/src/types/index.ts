@@ -151,3 +151,13 @@ export interface ResearchAnswer {
     };
   };
 }
+
+export interface UserItem {
+  id?: number;
+  username: string;
+  email?: string;
+  name: string;
+  role: string;
+  organization?: string;
+}
+

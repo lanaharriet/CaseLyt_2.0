@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { apiService } from '../services/api';
 import type { DocumentItem } from '../types';
-import { Upload, FileText, RefreshCw, Trash2, Eye, CheckCircle, AlertCircle } from 'lucide-react';
+import { Upload, FileText, RefreshCw, Trash2, Eye, CheckCircle, AlertCircle, PlusCircle, X } from 'lucide-react';
 
 export const DocumentLibraryPage: React.FC = () => {
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [selectedDoc, setSelectedDoc] = useState<DocumentItem | null>(null);
+  const [isCaseModalOpen, setIsCaseModalOpen] = useState(false);
+  const [isCreatingCase, setIsCreatingCase] = useState(false);
+  const [caseFormData, setCaseFormData] = useState({
+    title: '',
+    case_number: '',
+    jurisdiction: 'High Court of Delhi / Special CBI Court',
+    description: ''
+  });
 
   const fetchDocs = async () => {
     const docs = await apiService.getDocuments();
@@ -39,6 +47,28 @@ export const DocumentLibraryPage: React.FC = () => {
     }
   };
 
+  const handleCreateCaseSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!caseFormData.title.trim() || !caseFormData.case_number.trim()) return;
+    try {
+      setIsCreatingCase(true);
+      await apiService.createCase(caseFormData);
+      setIsCaseModalOpen(false);
+      setCaseFormData({
+        title: '',
+        case_number: '',
+        jurisdiction: 'High Court of Delhi / Special CBI Court',
+        description: ''
+      });
+      await fetchDocs();
+      window.location.reload();
+    } catch (err) {
+      console.error("Error creating case", err);
+    } finally {
+      setIsCreatingCase(false);
+    }
+  };
+
   const handleReprocess = async (id: string) => {
     await apiService.reprocessDocument(id);
     fetchDocs();
@@ -53,27 +83,124 @@ export const DocumentLibraryPage: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      {/* Top Banner & Upload */}
+      {/* Top Banner & Upload / Case Creation */}
       <div className="legal-card p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-4 border-l-[#6C2029]">
         <div>
           <h2 className="font-serif text-2xl font-bold text-[#171717]">Document Library & OCR Ingestion</h2>
           <p className="text-xs text-[#171717]/70 mt-0.5">
-            Supported Formats: PDF, DOCX, TXT. Automatic PyMuPDF / pdfplumber extraction with Tesseract OCR fallback.
+            Supported Formats: PDF, DOCX, TXT. Automatic PyMuPDF extraction, citation indexing, and timeline entity mapping.
           </p>
         </div>
 
-        <label className="flex items-center space-x-2 px-4 py-2 bg-[#6C2029] text-[#F4F0E7] text-xs font-semibold rounded-xs cursor-pointer hover:bg-[#54181F] transition-colors shadow-xs">
-          <Upload className="w-4 h-4" />
-          <span>{isUploading ? 'Ingesting File...' : 'Upload Document'}</span>
-          <input
-            type="file"
-            accept=".pdf,.docx,.txt"
-            onChange={handleFileUpload}
-            disabled={isUploading}
-            className="hidden"
-          />
-        </label>
+        <div className="flex items-center space-x-2.5">
+          <button
+            onClick={() => setIsCaseModalOpen(true)}
+            className="flex items-center space-x-1.5 px-3.5 py-2 border border-[#AD8748] text-[#AD8748] hover:bg-[#AD8748]/10 text-xs font-semibold rounded-xs transition-colors shadow-xs"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>New Case File</span>
+          </button>
+
+          <label className="flex items-center space-x-2 px-4 py-2 bg-[#6C2029] text-[#F4F0E7] text-xs font-semibold rounded-xs cursor-pointer hover:bg-[#54181F] transition-colors shadow-xs">
+            <Upload className="w-4 h-4" />
+            <span>{isUploading ? 'Ingesting File...' : 'Upload Document'}</span>
+            <input
+              type="file"
+              accept=".pdf,.docx,.txt"
+              onChange={handleFileUpload}
+              disabled={isUploading}
+              className="hidden"
+            />
+          </label>
+        </div>
       </div>
+
+      {/* Case Creation Modal */}
+      {isCaseModalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+          <div className="bg-[#FAF8F5] border border-[#171717]/20 rounded-xs max-w-lg w-full p-6 space-y-4 shadow-xl">
+            <div className="flex items-center justify-between border-b border-[#171717]/15 pb-3">
+              <h3 className="font-serif text-xl font-bold text-[#171717]">Create New Legal Case File</h3>
+              <button onClick={() => setIsCaseModalOpen(false)} className="text-[#171717]/60 hover:text-[#6C2029]">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateCaseSubmit} className="space-y-3.5">
+              <div>
+                <label className="block text-xs font-mono font-semibold text-[#171717] mb-1">
+                  Case Title / Caption *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. State of Maharashtra vs. Arvind Swamy & Ors."
+                  value={caseFormData.title}
+                  onChange={(e) => setCaseFormData({ ...caseFormData, title: e.target.value })}
+                  className="w-full bg-white border border-[#171717]/20 px-3 py-2 text-xs text-[#171717] focus:outline-none focus:border-[#6C2029]"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-mono font-semibold text-[#171717] mb-1">
+                    FIR / Case Number *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. FIR No. 892/2026"
+                    value={caseFormData.case_number}
+                    onChange={(e) => setCaseFormData({ ...caseFormData, case_number: e.target.value })}
+                    className="w-full bg-white border border-[#171717]/20 px-3 py-2 text-xs text-[#171717] focus:outline-none focus:border-[#6C2029]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-mono font-semibold text-[#171717] mb-1">
+                    Jurisdiction Court
+                  </label>
+                  <input
+                    type="text"
+                    value={caseFormData.jurisdiction}
+                    onChange={(e) => setCaseFormData({ ...caseFormData, jurisdiction: e.target.value })}
+                    className="w-full bg-white border border-[#171717]/20 px-3 py-2 text-xs text-[#171717] focus:outline-none focus:border-[#6C2029]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-mono font-semibold text-[#171717] mb-1">
+                  Case Brief / Background
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Brief summary of dispute, parties, and allegations..."
+                  value={caseFormData.description}
+                  onChange={(e) => setCaseFormData({ ...caseFormData, description: e.target.value })}
+                  className="w-full bg-white border border-[#171717]/20 px-3 py-2 text-xs text-[#171717] focus:outline-none focus:border-[#6C2029]"
+                />
+              </div>
+
+              <div className="flex items-center justify-end space-x-2 pt-2 border-t border-[#171717]/10">
+                <button
+                  type="button"
+                  onClick={() => setIsCaseModalOpen(false)}
+                  className="px-4 py-2 border border-[#171717]/20 text-xs text-[#171717] hover:bg-[#EAE5D9]/50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isCreatingCase}
+                  className="px-5 py-2 bg-[#6C2029] text-[#F4F0E7] text-xs font-semibold hover:bg-[#54181F]"
+                >
+                  {isCreatingCase ? 'Creating Case...' : 'Create Case File'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Document Library Table */}
       <div className="legal-card overflow-hidden">

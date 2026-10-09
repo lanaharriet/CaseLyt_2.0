@@ -6,6 +6,7 @@ import { ReportExportModal } from '../components/common/ReportExportModal';
 
 export const MainLayout: React.FC = () => {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleGlobalSearch = (query: string) => {
@@ -17,12 +18,25 @@ export const MainLayout: React.FC = () => {
       <Header
         onSearch={handleGlobalSearch}
         onOpenReportModal={() => setIsReportModalOpen(true)}
+        onToggleMobileSidebar={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+        isMobileSidebarOpen={isMobileSidebarOpen}
       />
 
-      <div className="flex-1 flex">
-        <Sidebar />
+      <div className="flex-1 flex relative">
+        {/* Mobile Backdrop Overlay */}
+        {isMobileSidebarOpen && (
+          <div
+            onClick={() => setIsMobileSidebarOpen(false)}
+            className="fixed inset-0 bg-black/40 z-30 lg:hidden backdrop-blur-xs transition-opacity"
+          />
+        )}
 
-        <main className="flex-1 p-6 overflow-y-auto max-w-[1600px] mx-auto w-full">
+        <Sidebar
+          isOpen={isMobileSidebarOpen}
+          onClose={() => setIsMobileSidebarOpen(false)}
+        />
+
+        <main className="flex-1 p-3 sm:p-6 overflow-y-auto max-w-[1600px] mx-auto w-full">
           <Outlet />
         </main>
       </div>

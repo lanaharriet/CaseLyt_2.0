@@ -84,18 +84,19 @@ class VerificationGate:
             has_conflict = conflicts.exists()
             if has_conflict:
                 conflict_obj = conflicts.first()
-            return {
-                'status': 'CONFLICTING',
-                'verdict': f'CONFLICTING — Contradiction detected with {conflict_obj.source_b_doc_name if conflict_obj.source_a_para == paragraph_id else conflict_obj.source_a_doc_name}',
-                'checks': {
-                    'source_exists': True,
-                    'passage_exists': True,
-                    'claim_supported': True,
-                    'conflict_check': True, # Triggered conflict
-                },
-                'conflict_details': conflict_obj.description,
-                'source_text': target_passage
-            }
+                return {
+                    'status': 'CONFLICTING',
+                    'verdict': f'CONFLICTING — Contradiction detected with {conflict_obj.source_b_doc_name if conflict_obj.source_a_para == paragraph_id else conflict_obj.source_a_doc_name}',
+                    'checks': {
+                        'source_exists': True,
+                        'passage_exists': True,
+                        'claim_supported': True,
+                        'conflict_check': True, # Triggered conflict
+                        'citation_resolved': bool(document_id_str and paragraph_id),
+                    },
+                    'conflict_details': conflict_obj.description,
+                    'source_text': target_passage
+                }
 
         # Step 5: VERIFIED Output
         return {
@@ -106,6 +107,7 @@ class VerificationGate:
                 'passage_exists': True,
                 'claim_supported': True,
                 'conflict_check': False, # Clean, no conflict
+                'citation_resolved': bool(document_id_str and paragraph_id),
             },
             'source_text': target_passage
         }

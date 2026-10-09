@@ -11,11 +11,13 @@ import { EvidenceSearchPage } from './pages/EvidenceSearchPage';
 import { ResearchWorkspacePage } from './pages/ResearchWorkspacePage';
 import { LegalDraftingPage } from './pages/LegalDraftingPage';
 import { AgentActivityPage } from './pages/AgentActivityPage';
+import { LoginPage } from './pages/LoginPage';
 
 export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Navigate to="/review" replace />} />
           <Route path="review" element={<CaseReviewPage />} />

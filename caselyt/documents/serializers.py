@@ -1,3 +1,4 @@
+import django.utils.timezone as tz
 from rest_framework import serializers
 from .models import Case, Document, Page, Paragraph
 
@@ -26,7 +27,9 @@ class DocumentSerializer(serializers.ModelSerializer):
         ]
 
     def get_uploaded_at_formatted(self, obj):
-        return obj.uploaded_at.strftime("%Y-%m-%d %H:%M:%S IST")
+        local_time = tz.localtime(obj.uploaded_at)
+        return local_time.strftime("%Y-%m-%d %H:%M:%S IST")
+
 
 class CaseSerializer(serializers.ModelSerializer):
     documents = DocumentSerializer(many=True, read_only=True)

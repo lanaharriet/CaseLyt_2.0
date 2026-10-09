@@ -43,18 +43,18 @@ export const ResearchWorkspacePage: React.FC = () => {
 
       {/* Query Bar */}
       <div className="legal-card p-4 space-y-3">
-        <form onSubmit={(e) => { e.preventDefault(); handleQuery(question); }} className="flex space-x-2">
+        <form onSubmit={(e) => { e.preventDefault(); handleQuery(question); }} className="flex flex-col sm:flex-row gap-2">
           <input
             type="text"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="Type your legal inquiry (e.g. 'Was Vikram Malhotra present in India during the transfer?')..."
-            className="flex-1 bg-white border border-[#171717]/20 px-4 py-2.5 text-xs text-[#171717] font-mono placeholder:text-[#171717]/40 focus:outline-none focus:border-[#6C2029]"
+            className="flex-1 bg-white border border-[#171717]/20 px-4 py-2.5 text-xs text-[#171717] font-mono placeholder:text-[#171717]/40 focus:outline-none focus:border-[#6C2029] rounded-xs"
           />
           <button
             type="submit"
             disabled={isQuerying}
-            className="px-6 py-2.5 bg-[#6C2029] text-[#F4F0E7] text-xs font-medium rounded-xs hover:bg-[#54181F] transition-colors flex items-center space-x-1.5"
+            className="px-6 py-2.5 bg-[#6C2029] text-[#F4F0E7] text-xs font-medium rounded-xs hover:bg-[#54181F] transition-colors flex items-center justify-center space-x-1.5 shrink-0"
           >
             <Send className="w-3.5 h-3.5" />
             <span>{isQuerying ? 'Analyzing Corpus...' : 'Run Query'}</span>

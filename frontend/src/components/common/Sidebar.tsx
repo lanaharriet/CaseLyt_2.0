@@ -1,19 +1,27 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   FolderOpen, ShieldCheck, Clock, AlertTriangle, HelpCircle,
-  Network, Search, MessageSquare, Edit3, Cpu
+  Network, Search, MessageSquare, Edit3, Cpu, LogOut
 } from 'lucide-react';
+import { apiService } from '../../services/api';
 
 interface SidebarProps {
   unresolvedConflictsCount?: number;
   missingItemsCount?: number;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
   unresolvedConflictsCount = 2,
-  missingItemsCount = 2
+  missingItemsCount = 2,
+  isOpen = true,
+  onClose
 }) => {
+  const navigate = useNavigate();
+  const currentUser = apiService.getAuthUser();
+
   const navItems = [
     { path: '/review', label: 'Case Review', icon: ShieldCheck },
     { path: '/documents', label: 'Document Library', icon: FolderOpen },
@@ -39,8 +47,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { path: '/agent-activity', label: 'Agent Activity Panel', icon: Cpu },
   ];
 
+  const handleLogout = async () => {
+    await apiService.logout();
+    if (onClose) onClose();
+    navigate('/login');
+  };
+
+  const handleNavClick = () => {
+    if (onClose) {
+      onClose();
+    }
+  };
+
   return (
-    <aside className="w-64 bg-[#FAF8F5] border-r border-[#171717]/15 min-h-[calc(100vh-57px)] flex flex-col justify-between p-3 select-none">
+    <aside
+      className={`
+        fixed inset-y-0 left-0 z-40 w-64 bg-[#FAF8F5] border-r border-[#171717]/15 flex flex-col justify-between p-3 select-none transition-transform duration-200 ease-in-out
+        lg:static lg:translate-x-0 lg:min-h-[calc(100vh-57px)]
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}
+    >
       <div className="space-y-6">
         <div>
           <p className="px-3 text-[10px] font-mono uppercase tracking-widest text-[#171717]/40 font-semibold mb-2">
@@ -51,6 +77,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <NavLink
                 key={item.path}
                 to={item.path}
+                onClick={handleNavClick}
                 className={({ isActive }) =>
                   `flex items-center justify-between px-3 py-2 text-xs rounded-xs font-medium transition-colors ${
                     isActive
@@ -88,11 +115,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      {/* User Info Footer */}
-      <div className="p-3 border-t border-[#171717]/15 bg-[#F4F0E7]/60 text-xs">
-        <div className="font-semibold text-[#171717]">Adv. Vikramaditya Sharma</div>
-        <div className="text-[10px] text-[#AD8748] font-mono font-medium">Senior Bar / Evidence Architect</div>
-        <div className="text-[9px] text-[#171717]/50 font-mono mt-0.5">High Court of Delhi • EIB-2026</div>
+      {/* User Info & Logout Footer */}
+      <div className="p-3 border-t border-[#171717]/15 bg-[#F4F0E7]/60 text-xs rounded-xs">
+        <div className="flex items-center justify-between">
+          <div className="overflow-hidden">
+            <div className="font-semibold text-[#171717] truncate">
+              {currentUser?.name || 'Adv. Vikramaditya Sharma'}
+            </div>
+            <div className="text-[10px] text-[#AD8748] font-mono font-medium truncate">
+              {currentUser?.role || 'Senior Bar / Evidence Architect'}
+            </div>
+            <div className="text-[9px] text-[#171717]/50 font-mono mt-0.5 truncate">
+              {currentUser?.organization || 'High Court of Delhi • EIB-2026'}
+            </div>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="p-1.5 text-stone-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors cursor-pointer shrink-0 ml-2"
+            title="Log Out"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </aside>
   );
